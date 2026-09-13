@@ -1,9 +1,11 @@
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner-ocean-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="docs/images/banner-ocean-light.svg">
-    <img alt="OctoClash Header" src="docs/images/banner-ocean-dark.svg" width="100%">
-  </picture>
+  <a href="docs/images/banner-ocean-dark.svg">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner-ocean-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="docs/images/banner-ocean-light.svg">
+      <img alt="OctoClash Header" src="docs/images/banner-ocean-dark.svg" width="100%">
+    </picture>
+  </a>
 
   <p align="center">
     <strong>Compare GitHub repositories side-by-side with high-density metrics, deep analytics, and publication-ready battle cards.</strong>
@@ -12,12 +14,12 @@
   <p align="center">
     <a href="https://jovanjorelli.github.io/OctoClash/"><img src="https://img.shields.io/badge/Launch_App-0969da?style=flat&logo=github&logoColor=white" alt="Launch App" /></a>&nbsp;
     <a href="#features"><img src="https://img.shields.io/badge/Key_Features-8250df?style=flat&logo=octocat&logoColor=white" alt="Key Features" /></a>&nbsp;
-    <a href="versions/"><img src="https://img.shields.io/badge/Versions-v1.0.0-1f883d?style=flat&logo=archive&logoColor=white" alt="Versions" /></a>&nbsp;
+    <a href="versions/"><img src="https://img.shields.io/badge/Versions-v1.0.1-1f883d?style=flat&logo=archive&logoColor=white" alt="Versions" /></a>&nbsp;
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2da44e?style=flat&logo=open-source-initiative&logoColor=white" alt="MIT License" /></a>
   </p>
 
   <p align="center">
-    <img src="https://img.shields.io/badge/React_18-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React 18" />&nbsp;
+    <img src="https://img.shields.io/badge/React_19-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React 19" />&nbsp;
     <img src="https://img.shields.io/badge/Vite_8-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite 8" />&nbsp;
     <img src="https://img.shields.io/badge/Tailwind_3.4-06B6D4?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />&nbsp;
     <img src="https://img.shields.io/badge/Primer_Tokens-24292f?style=flat&logo=github&logoColor=white" alt="Primer Tokens" />&nbsp;
@@ -27,11 +29,13 @@
 
   <br />
 
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/octoclash-dark-preview.png">
-    <source media="(prefers-color-scheme: light)" srcset="docs/images/octoclash-light-preview.png">
-    <img alt="OctoClash Comparison Matrix" src="docs/images/octoclash-dark-preview.png" width="100%">
-  </picture>
+  <a href="docs/images/octoclash-dark-preview.png">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/images/octoclash-dark-preview.png">
+      <source media="(prefers-color-scheme: light)" srcset="docs/images/octoclash-light-preview.png">
+      <img alt="OctoClash Comparison Matrix" src="docs/images/octoclash-dark-preview.png" width="100%">
+    </picture>
+  </a>
 </div>
 
 ---
@@ -63,11 +67,13 @@ Synthesize battle cards for social sharing, technical documentation, or engineer
 - Independent Theme Switcher: Export in dark or light mode regardless of current UI theme.
 - **Infinite Mode Multi-Part Generation**: When comparing more than 10 repositories, the export engine automatically chunks cards into 10-repo parts (`Part 1 of N`, `Part 2 of N`), downloading each part sequentially.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/battle-card-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/battle-card-light.png">
-  <img alt="OctoClash Battle Card" src="docs/images/battle-card-dark.png" width="100%">
-</picture>
+<a href="docs/images/battle-card-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/battle-card-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/battle-card-light.png">
+    <img alt="OctoClash Battle Card" src="docs/images/battle-card-dark.png" width="100%">
+  </picture>
+</a>
 
 ### 📈 Multi-Angle Charts View
 Instantly pivot from the tabular matrix into interactive visual charts:
@@ -76,11 +82,13 @@ Instantly pivot from the tabular matrix into interactive visual charts:
 - Update frequency and commit volume
 - Top contributor community benchmarks
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts-dark-preview.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/charts-light-preview.png">
-  <img alt="OctoClash Charts View" src="docs/images/charts-dark-preview.png" width="100%">
-</picture>
+<a href="docs/images/charts-dark-preview.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts-dark-preview.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/charts-light-preview.png">
+    <img alt="OctoClash Charts View" src="docs/images/charts-dark-preview.png" width="100%">
+  </picture>
+</a>
 
 ### 🎯 Curated Presets
 One-click presets across key modern developer ecosystems:
@@ -96,7 +104,7 @@ One-click presets across key modern developer ecosystems:
 
 | Component | Technology | Rationale |
 |---|---|---|
-| **Core Framework** | React 18 | Concurrent rendering, zero-overhead component trees |
+| **Core Framework** | React 19 | Concurrent rendering, zero-overhead component trees |
 | **Build Tooling** | Vite 8 | Rapid HMR, optimized tree-shaking and Rollup asset pipeline |
 | **Design System** | Primer Design Tokens + Tailwind CSS | Native GitHub aesthetics, WCAG AAA contrast ratios |
 | **Interaction Engine** | `@dnd-kit` | Accessible pointer & keyboard drag-and-drop mechanics |
@@ -110,7 +118,7 @@ One-click presets across key modern developer ecosystems:
 ## 💻 Quickstart
 
 ### Prerequisites
-- Node.js 18.0.0 or higher
+- Node.js 20.0.0 or higher
 - npm
 
 ### Installation
@@ -155,6 +163,7 @@ Offline source distribution compressed with maximum ratio is maintained in [`ver
 
 | Version | Distribution | Compression Algorithm | Package |
 |---|---|---|---|
+| **v1.0.1** | Source Archive | Maximum Deflate (Level 9) | [`v1.0.1.zip`](versions/v1.0.1.zip) |
 | **v1.0.0** | Source Archive | Maximum Deflate (Level 9) | [`v1.0.0.zip`](versions/v1.0.0.zip) |
 
 ---
@@ -164,54 +173,68 @@ Offline source distribution compressed with maximum ratio is maintained in [`ver
 Comprehensive visual showcase across dark and light themes:
 
 ### 📊 Comparison Matrix & Benchmarks
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/octoclash-dark-preview.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/octoclash-light-preview.png">
-  <img alt="Comparison Matrix" src="docs/images/octoclash-dark-preview.png" width="100%">
-</picture>
+<a href="docs/images/octoclash-dark-preview.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/octoclash-dark-preview.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/octoclash-light-preview.png">
+    <img alt="Comparison Matrix" src="docs/images/octoclash-dark-preview.png" width="100%">
+  </picture>
+</a>
 
 ### 📈 Multi-Angle Analytics & Velocity Charts
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts-dark-preview.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/charts-light-preview.png">
-  <img alt="Charts View" src="docs/images/charts-dark-preview.png" width="100%">
-</picture>
+<a href="docs/images/charts-dark-preview.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts-dark-preview.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/charts-light-preview.png">
+    <img alt="Charts View" src="docs/images/charts-dark-preview.png" width="100%">
+  </picture>
+</a>
 
 ### 👥 Interactive Maintainers & Contributor Profiles
 Hovering over any contributor avatar renders an accessible tooltip with their GitHub handle; clicking opens their profile directly in a new tab:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/contributors-table-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/contributors-table-light.png">
-  <img alt="Matrix Contributor Hover Tooltip" src="docs/images/contributors-table-dark.png" width="100%">
-</picture>
+<a href="docs/images/contributors-table-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/contributors-table-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/contributors-table-light.png">
+    <img alt="Matrix Contributor Hover Tooltip" src="docs/images/contributors-table-dark.png" width="100%">
+  </picture>
+</a>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/contributors-grid-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/contributors-grid-light.png">
-  <img alt="Charts Contributor Breakdown Tooltip" src="docs/images/contributors-grid-dark.png" width="100%">
-</picture>
+<a href="docs/images/contributors-grid-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/contributors-grid-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/contributors-grid-light.png">
+    <img alt="Charts Contributor Breakdown Tooltip" src="docs/images/contributors-grid-dark.png" width="100%">
+  </picture>
+</a>
 
 ### 🎴 Battle Card Generator (2x Retina Density)
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/battle-card-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/battle-card-light.png">
-  <img alt="Battle Card" src="docs/images/battle-card-dark.png" width="100%">
-</picture>
+<a href="docs/images/battle-card-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/battle-card-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/battle-card-light.png">
+    <img alt="Battle Card" src="docs/images/battle-card-dark.png" width="100%">
+  </picture>
+</a>
 
 ### ⚙️ Column Customization Panel
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/settings-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/settings-light.png">
-  <img alt="Column Customization" src="docs/images/settings-dark.png" width="100%">
-</picture>
+<a href="docs/images/settings-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/settings-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/settings-light.png">
+    <img alt="Column Customization" src="docs/images/settings-dark.png" width="100%">
+  </picture>
+</a>
 
 ### 📖 In-App README Viewer Modal
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-modal-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/readme-modal-light.png">
-  <img alt="README Viewer" src="docs/images/readme-modal-dark.png" width="100%">
-</picture>
+<a href="docs/images/readme-modal-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-modal-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/readme-modal-light.png">
+    <img alt="README Viewer" src="docs/images/readme-modal-dark.png" width="100%">
+  </picture>
+</a>
 
 ---
 
