@@ -14,17 +14,17 @@
   <p align="center">
     <a href="https://jovanjorelli.github.io/OctoClash/"><img src="https://img.shields.io/badge/Launch_App-0969da?style=flat&logo=github&logoColor=white" alt="Launch App" /></a>&nbsp;
     <a href="#features"><img src="https://img.shields.io/badge/Key_Features-8250df?style=flat&logo=octocat&logoColor=white" alt="Key Features" /></a>&nbsp;
-    <a href="versions/"><img src="https://img.shields.io/badge/Versions-v1.0.1-1f883d?style=flat&logo=archive&logoColor=white" alt="Versions" /></a>&nbsp;
+    <a href="#interface-gallery"><img src="https://img.shields.io/badge/Gallery-Showcase-bf8700?style=flat&logo=image&logoColor=white" alt="Gallery" /></a>&nbsp;
+    <a href="https://github.com/jovanjorelli/OctoClash/tags"><img src="https://img.shields.io/badge/Version-v1.0.2-1f883d?style=flat&logo=git&logoColor=white" alt="Version" /></a>&nbsp;
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2da44e?style=flat&logo=open-source-initiative&logoColor=white" alt="MIT License" /></a>
   </p>
 
   <p align="center">
     <img src="https://img.shields.io/badge/React_19-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React 19" />&nbsp;
-    <img src="https://img.shields.io/badge/Vite_8-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite 8" />&nbsp;
+    <img src="https://img.shields.io/badge/Vite_8.3-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite 8.3" />&nbsp;
     <img src="https://img.shields.io/badge/Tailwind_3.4-06B6D4?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />&nbsp;
     <img src="https://img.shields.io/badge/Primer_Tokens-24292f?style=flat&logo=github&logoColor=white" alt="Primer Tokens" />&nbsp;
-    <img src="https://img.shields.io/badge/Tests-22%2F22_Passed-2da44e?style=flat&logo=vitest&logoColor=white" alt="Vitest 22/22 Passed" />&nbsp;
-    <img src="https://img.shields.io/badge/Deploy-GitHub_Pages-0969da?style=flat&logo=github-pages&logoColor=white" alt="GitHub Pages" />
+    <img src="https://img.shields.io/badge/Tests-22%2F22_Passed-2da44e?style=flat&logo=vitest&logoColor=white" alt="Vitest 22/22 Passed" />
   </p>
 
   <br />
@@ -105,45 +105,13 @@ One-click presets across key modern developer ecosystems:
 | Component | Technology | Rationale |
 |---|---|---|
 | **Core Framework** | React 19 | Concurrent rendering, zero-overhead component trees |
-| **Build Tooling** | Vite 8 | Rapid HMR, optimized tree-shaking and Rollup asset pipeline |
+| **Build Tooling** | Vite 8.3 | Rapid HMR, optimized tree-shaking and Rollup asset pipeline |
 | **Design System** | Primer Design Tokens + Tailwind CSS | Native GitHub aesthetics, WCAG AAA contrast ratios |
 | **Interaction Engine** | `@dnd-kit` | Accessible pointer & keyboard drag-and-drop mechanics |
 | **State Management** | Zustand 5 | Lightweight immutable state with localStorage persistence |
 | **Rendering Engine** | Native HTML5 Canvas 2D | In-memory image generation with zero backend dependencies |
 | **Sanitizer** | DOMPurify | Strict XSS defense for external README markup |
 | **Icons** | `@primer/octicons-react` | GitHub native iconography |
-
----
-
-## 💻 Quickstart
-
-### Prerequisites
-- Node.js 20.0.0 or higher
-- npm
-
-### Installation
-```bash
-git clone https://github.com/jovanjorelli/OctoClash.git
-cd OctoClash
-npm install
-```
-
-### Development
-```bash
-npm run dev
-```
-
-### Full Verification Pipeline
-Runs linting, unit tests, and production build in a single pass:
-```bash
-npm run check
-```
-
-### Production Build & Preview
-```bash
-npm run build
-npm run preview
-```
 
 ---
 
@@ -157,20 +125,19 @@ For uninterrupted high-volume comparisons:
 
 ---
 
-## 📦 Release Archives
-
-Offline source distribution compressed with maximum ratio is maintained in [`versions/`](versions/):
-
-| Version | Distribution | Compression Algorithm | Package |
-|---|---|---|---|
-| **v1.0.1** | Source Archive | Maximum Deflate (Level 9) | [`v1.0.1.zip`](versions/v1.0.1.zip) |
-| **v1.0.0** | Source Archive | Maximum Deflate (Level 9) | [`v1.0.0.zip`](versions/v1.0.0.zip) |
-
----
-
+<a id="interface-gallery"></a>
 ## 🖼️ Interface Gallery
 
 Comprehensive visual showcase across dark and light themes:
+
+### 🚀 Interactive Preset Launchpad
+<a href="docs/images/launchpad-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/launchpad-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/launchpad-light.png">
+    <img alt="Interactive Preset Launchpad" src="docs/images/launchpad-dark.png" width="100%">
+  </picture>
+</a>
 
 ### 📊 Comparison Matrix & Benchmarks
 <a href="docs/images/octoclash-dark-preview.png">
@@ -181,12 +148,39 @@ Comprehensive visual showcase across dark and light themes:
   </picture>
 </a>
 
+### ♾️ Infinite Mode Multi-Repository View
+<a href="docs/images/infinite-mode-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/infinite-mode-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/infinite-mode-light.png">
+    <img alt="Infinite Mode Multi-Repository View" src="docs/images/infinite-mode-dark.png" width="100%">
+  </picture>
+</a>
+
 ### 📈 Multi-Angle Analytics & Velocity Charts
 <a href="docs/images/charts-dark-preview.png">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts-dark-preview.png">
     <source media="(prefers-color-scheme: light)" srcset="docs/images/charts-light-preview.png">
     <img alt="Charts View" src="docs/images/charts-dark-preview.png" width="100%">
+  </picture>
+</a>
+
+### 🎯 Comparative Metrics & Statistical Summary
+<a href="docs/images/radar-benchmark-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/radar-benchmark-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/radar-benchmark-light.png">
+    <img alt="Comparative Metrics and Statistical Summary" src="docs/images/radar-benchmark-dark.png" width="100%">
+  </picture>
+</a>
+
+### 🌐 Language Distribution Matrix
+<a href="docs/images/languages-breakdown-dark.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/languages-breakdown-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/languages-breakdown-light.png">
+    <img alt="Language Distribution Matrix" src="docs/images/languages-breakdown-dark.png" width="100%">
   </picture>
 </a>
 
