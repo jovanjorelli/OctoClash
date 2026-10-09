@@ -80,6 +80,9 @@ const PRESET_CATEGORIES = [
   },
 ];
 
+/**
+ * Drag-and-drop sortable tag pill representing a repository in the clash list.
+ */
 function SortableRepoTag({ repo, onRemove, totalCount }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: repo });
 
@@ -124,6 +127,10 @@ function SortableRepoTag({ repo, onRemove, totalCount }) {
   );
 }
 
+/**
+ * Repository search bar with autocomplete dropdown, quick preset templates, and dnd reordering tags.
+ * @param {{ onFetchRepo: (repoName: string) => void }} props
+ */
 export const RepoInput = memo(function RepoInput({ onFetchRepo }) {
   const repos = useAppStore((state) => state.repos);
   const setRepos = useAppStore((state) => state.setRepos);

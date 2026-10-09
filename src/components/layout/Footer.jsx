@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../store/appStore';
 import { GearIcon, KeyIcon, TrashIcon, CheckIcon, LinkExternalIcon } from '@primer/octicons-react';
 
+/**
+ * Bottom application bar displaying GitHub rate limits, PAT credential input, and columns settings trigger.
+ */
 export function Footer() {
   const token = useAppStore((state) => state.token);
   const setToken = useAppStore((state) => state.setToken);

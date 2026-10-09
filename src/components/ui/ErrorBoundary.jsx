@@ -2,6 +2,9 @@ import React from 'react';
 import { AlertIcon, SyncIcon } from '@primer/octicons-react';
 import { clearOctoClashSession, clearOctoClashStorage } from '../../utils/storage';
 
+/**
+ * Top-level React error boundary component that renders a crash diagnostic view and recovery button.
+ */
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);

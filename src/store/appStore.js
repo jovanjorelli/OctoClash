@@ -1,3 +1,8 @@
+/**
+ * Global application state store powered by Zustand.
+ * Handles comparison list, theme, column toggles, rate limit headers, and token management.
+ */
+
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { normalizeRepoFullName } from '../services/githubApi'
@@ -17,6 +22,9 @@ const areReposEqual = (a, b) => {
   return a.every((repo, index) => normalizeRepo(repo) === normalizeRepo(b[index]));
 };
 
+/**
+ * Default visibility configuration for repository comparison table columns.
+ */
 export const DEFAULT_VISIBLE_COLUMNS = {
   language: true,
   npm: true,
@@ -34,6 +42,11 @@ export const DEFAULT_VISIBLE_COLUMNS = {
   contributors: true,
 };
 
+/**
+ * Main application hook for global state.
+ * Persistent fields (theme, repos, infiniteMode, visibleColumns) save to localStorage,
+ * while user GitHub tokens are stored isolated in sessionStorage.
+ */
 export const useAppStore = create(
   persist(
     (set) => ({
@@ -81,18 +94,43 @@ export const useAppStore = create(
         ).filter(Boolean);
         return { repos: reposToSet, reposData: sortedData };
       }),
-      addRepo: (repo) => set((state) => {
+      addRepo: (repo, data = null) => set((state) => {
         const nextRepo = toValidRepo(repo);
         if (!nextRepo) return state;
         if (state.repos.some((existing) => normalizeRepo(existing) === normalizeRepo(nextRepo))) return state;
         if (!state.infiniteMode && state.repos.length >= 10) return state;
-        return { repos: [...state.repos, nextRepo] };
+
+        const nextRepos = [...state.repos, nextRepo];
+        if (data) {
+          const alreadyInData = state.reposData.some(
+            (rd) => rd?.info?.full_name?.toLowerCase() === nextRepo.toLowerCase()
+          );
+          const nextReposData = alreadyInData ? state.reposData : [...state.reposData, data];
+          return { repos: nextRepos, reposData: nextReposData };
+        }
+
+        return { repos: nextRepos };
       }),
       removeRepo: (repo) => set((state) => ({
         repos: state.repos.filter(r => normalizeRepo(r) !== normalizeRepo(repo)),
         reposData: state.reposData.filter(rd => rd?.info?.full_name?.toLowerCase() !== normalizeRepo(repo))
       })),
-      reorderRepos: (startIndex, endIndex) => set((state) => {
+      reorderRepos: (source, target) => set((state) => {
+        const startIndex = typeof source === 'number'
+          ? source
+          : state.repos.findIndex(r => normalizeRepo(r) === normalizeRepo(String(source)));
+        const endIndex = typeof target === 'number'
+          ? target
+          : state.repos.findIndex(r => normalizeRepo(r) === normalizeRepo(String(target)));
+
+        if (startIndex === -1 || endIndex === -1 || startIndex === endIndex) {
+          return state;
+        }
+
+        if (startIndex < 0 || startIndex >= state.repos.length || endIndex < 0 || endIndex >= state.repos.length) {
+          return state;
+        }
+
         const result = Array.from(state.repos);
         const [removed] = result.splice(startIndex, 1);
         result.splice(endIndex, 0, removed);

@@ -1,5 +1,9 @@
 import React, { memo } from 'react';
 
+/**
+ * Breakdown table rendering GitHub-style colored progress bars and percentage tags per language for each repository.
+ * @param {{ detailedLanguages: Array<{ repo: string, html_url: string, langs: Array<{ name: string, percent: number, color: string }> }> }} props
+ */
 export const LanguageBreakdownTable = memo(function LanguageBreakdownTable({ detailedLanguages }) {
   return (
     <div className="bg-canvas-default border border-border-default rounded-xl p-6 shadow-sm overflow-hidden flex flex-col">

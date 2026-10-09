@@ -1,7 +1,9 @@
+/* Global Tailwind directive imports */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Primer Design System CSS custom properties for light and dark color schemes */
 @layer base {
   :root {
     --color-canvas-default: #ffffff;

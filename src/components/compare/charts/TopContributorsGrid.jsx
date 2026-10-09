@@ -1,6 +1,10 @@
 import React, { memo } from 'react';
 import { ContributorsList } from '../ContributorsList';
 
+/**
+ * Grid displaying top contributor avatar stacks segmented by repository cards.
+ * @param {{ reposData: Array<object> }} props
+ */
 export const TopContributorsGrid = memo(function TopContributorsGrid({ reposData }) {
   return (
     <div className="bg-canvas-default border border-border-default rounded-xl p-6 shadow-sm">

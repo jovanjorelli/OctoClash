@@ -40,17 +40,27 @@ const tooltipStyle = {
   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.5)'
 };
 
-export const Charts = memo(function Charts() {
+/**
+ * Visual dashboard module aggregating leaderboard cards, star history charts,
+ * commit velocity timelines, language breakdown tables, and contributor grids.
+ */
+export const Charts = memo(function Charts({ activeTab = 'charts' } = {}) {
   const reposData = useAppStore(state => state.reposData);
   const { fetchStarHistory } = useGitHubApi();
   const [starData, setStarData] = useState([]);
   const [loadingStars, setLoadingStars] = useState(false);
 
   useEffect(() => {
+    if (activeTab !== 'charts') return;
+    if (!reposData || reposData.length === 0) {
+      setStarData([]);
+      setLoadingStars(false);
+      return;
+    }
     let isMounted = true;
     const loadStars = async () => {
-      if (!reposData || reposData.length === 0) return;
       setLoadingStars(true);
+      try {
       
       const allHistories = await Promise.all(
         reposData.map(repo => fetchStarHistory(repo.info.full_name, repo.info.stargazers_count, repo.info.created_at))
@@ -148,14 +158,20 @@ export const Charts = memo(function Charts() {
       deduped.reverse();
 
       setStarData(deduped);
-      setLoadingStars(false);
+      } catch (err) {
+        console.error('Failed to load star history:', err);
+      } finally {
+        if (isMounted) {
+          setLoadingStars(false);
+        }
+      }
     };
 
     loadStars();
     return () => {
       isMounted = false;
     };
-  }, [reposData, fetchStarHistory]);
+  }, [reposData, fetchStarHistory, activeTab]);
 
   const commitData = useMemo(() => {
     if (!reposData || reposData.length === 0) return [];

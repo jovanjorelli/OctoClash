@@ -4,6 +4,9 @@ import { Button } from '../ui/Button';
 import { useAppStore } from '../../store/appStore';
 import { exportBattleCardPng } from '../../utils/cardGenerator';
 
+/**
+ * Toolbar providing share URL clipboard copy, PNG battle card rendering, CSV export, and JSON export.
+ */
 export function SharePanel() {
   const [copying, setCopying] = useState(false);
   const [exportingPng, setExportingPng] = useState(false);
@@ -53,21 +56,38 @@ export function SharePanel() {
 
   const handleExportCsv = () => {
     if (!reposData || reposData.length === 0) return;
-    const headers = ['Repository', 'Language', 'Health Score', 'Health Grade', 'Latest Release', 'Stars', 'Forks', 'Watchers', 'Commits (1y)', 'Open Issues', 'Avg Issue Time', 'License'];
-    const rows = reposData.map(({ info, commitsLastYear, avgIssueTime, healthScore, healthGrade, latestRelease }) => [
-      `"${info.full_name}"`,
-      `"${info.language || '-'}"`,
-      healthScore || 0,
-      `"${healthGrade || '-'}"`,
-      `"${latestRelease?.tag || '-'}"`,
-      info.stargazers_count || 0,
-      info.forks_count || 0,
-      info.subscribers_count || info.watchers_count || 0,
-      commitsLastYear || 0,
-      info.open_issues_count || 0,
-      `"${avgIssueTime || '-'}"`,
-      `"${info.license?.spdx_id || 'None'}"`,
-    ]);
+
+    const escapeCsvCell = (val) => {
+      if (val === null || val === undefined) return '""';
+      if (typeof val === 'number') return val;
+      let str = String(val);
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
+    const headers = ['Repository', 'Language', 'NPM / wk', 'Health Score', 'Health Grade', 'Latest Release', 'Stars', 'Forks', 'Watchers', 'Commits (1y)', 'Open Issues', 'Avg Issue Time', 'Size (MB)', 'License'];
+    const rows = reposData.map(({ info, commitsLastYear, avgIssueTime, healthScore, healthGrade, latestRelease }) => {
+      const repoNpm = npmDownloads[info.full_name];
+      const sizeMb = Number(((info.size || 0) / 1024).toFixed(1));
+      return [
+        escapeCsvCell(info.full_name),
+        escapeCsvCell(info.language || '-'),
+        escapeCsvCell(typeof repoNpm === 'number' ? repoNpm : (repoNpm ?? 0)),
+        escapeCsvCell(healthScore || 0),
+        escapeCsvCell(healthGrade || '-'),
+        escapeCsvCell(latestRelease?.tag || '-'),
+        escapeCsvCell(info.stargazers_count || 0),
+        escapeCsvCell(info.forks_count || 0),
+        escapeCsvCell(info.subscribers_count ?? info.watchers_count ?? 0),
+        escapeCsvCell(commitsLastYear || 0),
+        escapeCsvCell(info.open_issues_count || 0),
+        escapeCsvCell(avgIssueTime || '-'),
+        escapeCsvCell(sizeMb),
+        escapeCsvCell(info.license?.spdx_id || 'None'),
+      ];
+    });
 
     const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -91,10 +111,12 @@ export function SharePanel() {
       latest_release: latestRelease?.tag || null,
       stars: info.stargazers_count,
       forks: info.forks_count,
-      watchers: info.subscribers_count || info.watchers_count,
+      watchers: info.subscribers_count ?? info.watchers_count ?? 0,
       commits_1y: commitsLastYear,
       open_issues: info.open_issues_count,
       avg_issue_resolution_time: avgIssueTime,
+      size: info.size ?? 0,
+      npm_downloads: typeof npmDownloads[info.full_name] === 'number' ? npmDownloads[info.full_name] : (npmDownloads[info.full_name] ?? null),
       license: info.license?.spdx_id || 'None',
       languages,
     }));

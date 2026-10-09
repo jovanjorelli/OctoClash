@@ -1,7 +1,15 @@
+/**
+ * Custom React hook wrapping the GitHub API client with loading and error state tracking.
+ */
+
 import { useState, useCallback, useMemo } from 'react';
 import { useAppStore } from '../store/appStore';
 import { createGitHubApiClient } from '../services/githubApi';
 
+/**
+ * Manages GitHub API client interactions tied to the global auth token and rate limit state.
+ * @returns {object} Async methods (fetchRepoData, searchRepos, fetchStarHistory, fetchReadmeHtml) and status flags.
+ */
 export function useGitHubApi() {
   const token = useAppStore(state => state.token);
   const setRateLimit = useAppStore(state => state.setRateLimit);

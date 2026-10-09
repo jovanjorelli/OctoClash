@@ -4,6 +4,10 @@ import {
   Legend, ResponsiveContainer
 } from 'recharts';
 
+/**
+ * Stacked area chart comparing weekly commit volumes across repositories over the last 12 weeks.
+ * @param {{ commitData: Array<object>, reposData: Array<object>, colors: string[], tooltipStyle: object }} props
+ */
 export const CommitActivityChart = memo(function CommitActivityChart({
   commitData,
   reposData,

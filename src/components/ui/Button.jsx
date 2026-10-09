@@ -1,6 +1,9 @@
 import React from 'react';
 import { cn } from '../../utils/helpers';
 
+/**
+ * Polymorphic styled button component supporting standard Primer-inspired variants and sizes.
+ */
 export const Button = React.forwardRef(({ className, variant = 'default', size = 'md', ...props }, ref) => {
   const baseStyles = "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-accent disabled:opacity-50 disabled:pointer-events-none rounded-md border";
   

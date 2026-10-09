@@ -1,3 +1,7 @@
+/**
+ * Hook test suite for useGitHubApi (loading states, concurrent fetches, store synchronization).
+ */
+
 import React, { useEffect } from 'react';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
