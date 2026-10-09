@@ -1,3 +1,9 @@
+/**
+ * GitHub API service module.
+ * Provides repository data fetching, search, license categorization, health scoring,
+ * star history sampling, and README fetching with LRU and localStorage caching.
+ */
+
 const API_BASE_URL = 'https://api.github.com';
 const CACHE_PREFIX = 'octoclash_cache_v3_';
 const CACHE_TTL_MS = 1000 * 60 * 60;
@@ -7,6 +13,99 @@ const DEFAULT_MAX_RETRIES = 3;
 const sharedMemoryCache = new Map();
 
 const defaultSleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const DEFAULT_MAX_CONCURRENCY = 5;
+const RATE_LIMIT_DELAY_MS = 500;
+
+/**
+ * Promise-based concurrency queue ensuring no more than maxConcurrency requests
+ * execute simultaneously, with automatic throttling when GitHub rate limit remaining < 10.
+ */
+export class RequestQueue {
+  constructor({ maxConcurrency = DEFAULT_MAX_CONCURRENCY, sleep = defaultSleep } = {}) {
+    this.maxConcurrency = maxConcurrency;
+    this.sleep = sleep;
+    this.running = 0;
+    this.queue = [];
+    this.lowRateLimit = false;
+    this.lastRequestTime = 0;
+  }
+
+  /**
+   * Updates rate limit status based on X-RateLimit-Remaining header value.
+   * If remaining < 10, enables 500ms throttling between requests.
+   * @param {string|number|null} remaining - Value from X-RateLimit-Remaining header.
+   */
+  updateRateLimit(remaining) {
+    if (remaining !== null && remaining !== undefined) {
+      const parsed = typeof remaining === 'number' ? remaining : parseInt(remaining, 10);
+      if (!Number.isNaN(parsed)) {
+        this.lowRateLimit = parsed < 10;
+      }
+    }
+  }
+
+  async acquire() {
+    if (this.running < this.maxConcurrency) {
+      this.running += 1;
+      return;
+    }
+    await new Promise((resolve) => this.queue.push(resolve));
+  }
+
+  release() {
+    if (this.queue.length > 0) {
+      const next = this.queue.shift();
+      next();
+    } else {
+      this.running = Math.max(0, this.running - 1);
+    }
+  }
+
+  /**
+   * Executes an asynchronous task through the concurrency queue.
+   * Adds 500ms delay between requests if X-RateLimit-Remaining < 10.
+   * @param {() => Promise<any>} task - Async task to execute.
+   * @param {(ms: number) => Promise<void>} [customSleep=null] - Optional sleep override.
+   * @returns {Promise<any>} Result of the task.
+   */
+  async run(task, customSleep = null) {
+    await this.acquire();
+    const sleeper = customSleep || this.sleep;
+    try {
+      if (this.lowRateLimit) {
+        const now = Date.now();
+        const delay = Math.max(0, RATE_LIMIT_DELAY_MS - (now - this.lastRequestTime));
+        this.lastRequestTime = now + delay;
+        if (delay > 0) {
+          await sleeper(delay);
+        }
+      } else {
+        this.lastRequestTime = Date.now();
+      }
+      return await task();
+    } finally {
+      this.release();
+    }
+  }
+
+  get activeCount() {
+    return this.running;
+  }
+
+  get pendingCount() {
+    return this.queue.length;
+  }
+
+  reset() {
+    this.running = 0;
+    this.queue = [];
+    this.lowRateLimit = false;
+    this.lastRequestTime = 0;
+  }
+}
+
+export const sharedRequestQueue = new RequestQueue();
 
 function getBrowserStorage() {
   if (typeof window === 'undefined') return null;
@@ -36,6 +135,12 @@ function normalizeForCache(value) {
   return String(value).trim().toLowerCase();
 }
 
+/**
+ * Normalizes input repo string/URL to a validated 'owner/repo' format.
+ * @param {string} value - Raw repository URL, SSH slug, or 'owner/repo'.
+ * @returns {string} Normalized 'owner/repo' string.
+ * @throws {Error} Throws 'invalidRepo' if format or characters are invalid.
+ */
 export function normalizeRepoFullName(value) {
   const raw = String(value || '').trim();
   const withoutGithubUrl = raw
@@ -136,8 +241,9 @@ function setCache(key, data, { storage, memoryCache, now }) {
 }
 
 function safeDateMs(value) {
+  if (value === null || value === undefined || value === '') return null;
   const ms = new Date(value).getTime();
-  return Number.isFinite(ms) ? ms : null;
+  return Number.isFinite(ms) && ms > 0 ? ms : null;
 }
 
 const PERMISSIVE_SPDX = new Set([
@@ -150,6 +256,11 @@ const COPYLEFT_SPDX = new Set([
   'mpl-2.0', 'epl-2.0', 'sspl-1.0', 'osl-3.0', 'eupl-1.2'
 ]);
 
+/**
+ * Classifies an SPDX license object into permissive, copyleft, unlicensed, or other.
+ * @param {object|null} license - GitHub license payload.
+ * @returns {{ type: string, label: string, risk: string }} License category and risk level.
+ */
 export function classifyLicense(license) {
   if (!license || typeof license !== 'object') {
     return { type: 'unlicensed', label: 'None', risk: 'high' };
@@ -172,8 +283,23 @@ export function classifyLicense(license) {
   return { type: 'other', label: spdx, risk: 'unknown' };
 }
 
-export function calculateHealthScore({ repoInfo, commitsLastYear, commitActivity, avgIssueTime, contributors, now = Date.now() }) {
-  if (!repoInfo) return { score: 0, grade: 'F' };
+/**
+ * Computes a repository health score (0-100) and letter grade based on recency, commit volume, issues, and license.
+ * @param {object} params - Calculation parameters including repo info and activity metrics.
+ * @returns {{ score: number, grade: string }} Numerical score and letter grade (A+ to F).
+ */
+export function calculateHealthScore({ repoInfo, commitsLastYear, commitActivity, avgIssueTime, contributors, now = Date.now() } = {}) {
+  let days = null;
+  if (avgIssueTime) {
+    const str = String(avgIssueTime);
+    const match = str.match(/(\d+)/);
+    days = str.includes('<') ? 0.5 : (match ? parseInt(match[1], 10) : 30);
+  }
+
+  if (!repoInfo) {
+    if (avgIssueTime) return days;
+    return { score: 0, grade: 'F' };
+  }
 
   let score = 0;
 
@@ -198,9 +324,7 @@ export function calculateHealthScore({ repoInfo, commitsLastYear, commitActivity
     score += 5;
   }
 
-  if (avgIssueTime) {
-    const match = String(avgIssueTime).match(/(\d+)/);
-    const days = match ? parseInt(match[1], 10) : (avgIssueTime.includes('<') ? 0.5 : 30);
+  if (days !== null) {
     if (days <= 3) score += 25;
     else if (days <= 14) score += 20;
     else if (days <= 30) score += 15;
@@ -222,6 +346,7 @@ export function calculateHealthScore({ repoInfo, commitsLastYear, commitActivity
   if (!repoInfo.archived && !repoInfo.disabled) {
     score += 5;
   } else {
+    // Penalize archived or disabled repositories
     score = Math.min(score, 35);
   }
 
@@ -234,9 +359,14 @@ export function calculateHealthScore({ repoInfo, commitsLastYear, commitActivity
   else if (clampedScore >= 55) grade = 'C';
   else if (clampedScore >= 40) grade = 'D';
 
-  return { score: clampedScore, grade };
+  return { score: clampedScore, grade, days };
 }
 
+/**
+ * Normalizes raw GitHub API responses into a unified repository data record.
+ * @param {object} params - Raw responses from GitHub endpoints.
+ * @returns {object} Normalized repository representation.
+ */
 export function normalizeRepoData({
   repoInfo,
   languages,
@@ -271,7 +401,7 @@ export function normalizeRepoData({
   let latestRelease = null;
   if (releaseRaw && typeof releaseRaw === 'object') {
     if (releaseRaw.tag_name) {
-      const pubMs = safeDateMs(releaseRaw.published_at);
+      const pubMs = releaseRaw.published_at ? safeDateMs(releaseRaw.published_at) : null;
       const daysAgo = pubMs !== null ? Math.max(0, Math.round((now - pubMs) / (1000 * 60 * 60 * 24))) : null;
       latestRelease = {
         tag: releaseRaw.tag_name,
@@ -316,6 +446,12 @@ export function normalizeRepoData({
   };
 }
 
+/**
+ * Factory creating a GitHub API client instance with rate limiting, retries, and scoped cache.
+ * When authenticated with a token, responses are kept in memory only to protect user privacy.
+ * @param {object} [options={}] - Configuration options for fetch implementation, token, cache, and retries.
+ * @returns {object} API client methods: fetchRepoData, searchRepos, fetchStarHistory, fetchReadmeHtml.
+ */
 export function createGitHubApiClient({
   token = '',
   fetchImpl = getFetch(),
@@ -325,6 +461,7 @@ export function createGitHubApiClient({
   sleep = defaultSleep,
   maxRetries = DEFAULT_MAX_RETRIES,
   onRateLimit = null,
+  requestQueue = sharedRequestQueue,
 } = {}) {
   const authToken = token.trim();
   const cacheScope = authToken ? `auth_${hashToken(authToken)}` : 'anon';
@@ -344,7 +481,15 @@ export function createGitHubApiClient({
       headers.Authorization = `Bearer ${authToken}`;
     }
 
-    const response = await fetchImpl(`${API_BASE_URL}${url}`, { headers });
+    const response = await requestQueue.run(async () => {
+      const res = await fetchImpl(`${API_BASE_URL}${url}`, { headers });
+      const remainingHeader = res.headers?.get?.('X-RateLimit-Remaining');
+      if (remainingHeader !== null && remainingHeader !== undefined) {
+        requestQueue.updateRateLimit(remainingHeader);
+      }
+      return res;
+    }, sleep);
+
     const remaining = response.headers?.get?.('X-RateLimit-Remaining');
     const limit = response.headers?.get?.('X-RateLimit-Limit');
     const reset = response.headers?.get?.('X-RateLimit-Reset');
@@ -507,14 +652,22 @@ export function createGitHubApiClient({
 
       if (createdAt && (historyPoints.length <= 2 || safeTotalStars > 40000)) {
         const now = Date.now();
-        const createdTime = new Date(createdAt).getTime();
-        if (now > createdTime) {
+        const lastRealSample = historyPoints[historyPoints.length - 1];
+        const lastRealStars = lastRealSample ? lastRealSample.stars : 0;
+        const lastRealTime = lastRealSample ? new Date(lastRealSample.date).getTime() : new Date(createdAt).getTime();
+
+        const startTime = lastRealStars > 0 ? lastRealTime : new Date(createdAt).getTime();
+        const startStars = lastRealStars > 0 ? lastRealStars : 0;
+
+        if (now > startTime) {
           const intervals = 5;
           for (let i = 1; i <= intervals; i += 1) {
             const fraction = i / intervals;
-            const time = createdTime + (now - createdTime) * fraction;
+            const time = startTime + (now - startTime) * fraction;
             const starRatio = Math.pow(fraction, 1.6);
-            const stars = i === intervals ? safeTotalStars : Math.min(safeTotalStars, Math.round(safeTotalStars * starRatio));
+            const stars = i === intervals
+              ? safeTotalStars
+              : Math.min(safeTotalStars, Math.max(startStars, Math.round(startStars + (safeTotalStars - startStars) * starRatio)));
             historyPoints.push({
               date: new Date(time).toISOString(),
               stars,
@@ -524,6 +677,15 @@ export function createGitHubApiClient({
       }
 
       historyPoints.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      let maxStarsSoFar = 0;
+      for (const pt of historyPoints) {
+        if (pt.stars < maxStarsSoFar) {
+          pt.stars = maxStarsSoFar;
+        } else {
+          maxStarsSoFar = pt.stars;
+        }
+      }
 
       const dedupedPoints = [];
       const seenDates = new Set();
@@ -545,12 +707,19 @@ export function createGitHubApiClient({
     const cacheKey = `readme_${normalizeForCache(normalizedRepo)}`;
     return cached(cacheKey, async () => {
       const readmePath = repoApiPath(normalizedRepo, '/readme');
-      const response = await fetchImpl(`${API_BASE_URL}${readmePath}`, {
-        headers: {
-          Accept: 'application/vnd.github.html',
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-        },
-      });
+      const response = await requestQueue.run(async () => {
+        const res = await fetchImpl(`${API_BASE_URL}${readmePath}`, {
+          headers: {
+            Accept: 'application/vnd.github.html',
+            ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+          },
+        });
+        const remainingHeader = res.headers?.get?.('X-RateLimit-Remaining');
+        if (remainingHeader !== null && remainingHeader !== undefined) {
+          requestQueue.updateRateLimit(remainingHeader);
+        }
+        return res;
+      }, sleep);
 
       const remaining = response.headers?.get?.('X-RateLimit-Remaining');
       if (response.status === 429 || (response.status === 403 && remaining === '0')) {
@@ -566,9 +735,14 @@ export function createGitHubApiClient({
     searchRepos,
     fetchStarHistory,
     fetchReadmeHtml,
+    requestQueue,
   };
 }
 
+/**
+ * Clears the shared in-memory response cache and resets the shared request queue.
+ */
 export function clearSharedGitHubApiCache() {
   sharedMemoryCache.clear();
+  sharedRequestQueue.reset();
 }

@@ -4,6 +4,10 @@ import {
   Legend, ResponsiveContainer
 } from 'recharts';
 
+/**
+ * Interactive line chart displaying cumulative star growth over time with formatted axis numbers and loading indicator.
+ * @param {{ starData: Array<object>, reposData: Array<object>, loadingStars: boolean, colors: string[], tooltipStyle: object }} props
+ */
 export const StarHistoryChart = memo(function StarHistoryChart({
   starData,
   reposData,
@@ -22,7 +26,7 @@ export const StarHistoryChart = memo(function StarHistoryChart({
         )}
       </h3>
       <div className="h-[400px]">
-        {starData.length > 0 ? (
+        {starData.length >= 2 ? (
           <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <LineChart data={starData} margin={{ top: 10, right: 10, left: -10, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-muted)" vertical={false} />

@@ -20,6 +20,9 @@ const COLUMN_DEFINITIONS = [
   { id: 'contributors', label: 'Contributors' },
 ];
 
+/**
+ * Modal dialog enabling users to toggle visibility of comparison table columns.
+ */
 export function SettingsModal() {
   const settingsOpen = useAppStore((state) => state.settingsOpen);
   const setSettingsOpen = useAppStore((state) => state.setSettingsOpen);

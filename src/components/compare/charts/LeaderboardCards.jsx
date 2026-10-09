@@ -1,6 +1,9 @@
 import React, { memo } from 'react';
 import { StarIcon, RepoForkedIcon, PulseIcon, FlameIcon, HeartIcon } from '@primer/octicons-react';
 
+/**
+ * Mini-card presenting rank-ordered progress bars for a specific metric dimension.
+ */
 const LeaderboardCard = memo(function LeaderboardCard({
   title,
   icon: Icon,
@@ -24,7 +27,7 @@ const LeaderboardCard = memo(function LeaderboardCard({
         {data.map((item, idx) => {
           const pct = Math.min(100, Math.max(0, ((item.value || 0) / maxVal) * 100));
           return (
-            <div key={item.name} className="flex flex-col gap-1.5">
+            <div key={item.full_name || item.name} className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center text-sm">
                 <span className="font-medium text-fg-default truncate pr-2" title={item.name}>
                   {idx + 1}. {item.name}
@@ -47,6 +50,10 @@ const LeaderboardCard = memo(function LeaderboardCard({
   );
 });
 
+/**
+ * Grid layout rendering individual leaderboard cards for health, stars, forks, velocity, and npm downloads.
+ * @param {{ leaderboards?: object }} props
+ */
 export const LeaderboardCards = memo(function LeaderboardCards({ leaderboards }) {
   if (!leaderboards) return null;
 
@@ -58,28 +65,28 @@ export const LeaderboardCards = memo(function LeaderboardCards({ leaderboards })
         titleClass="text-fg-accent"
         colorVariant="bg-fg-accent"
         valueSuffix=" / 100"
-        data={leaderboards.byHealth?.map(r => ({ name: r.info.name, value: r.healthScore || 0 }))}
+        data={leaderboards.byHealth?.map(r => ({ name: r.info.name, full_name: r.info.full_name, value: r.healthScore || 0 }))}
       />
       <LeaderboardCard
         title="Popularity (Stars)"
         icon={StarIcon}
         titleClass="text-fg-warning"
         colorVariant="bg-fg-warning"
-        data={leaderboards.byStars.map(r => ({ name: r.info.name, value: r.info.stargazers_count }))}
+        data={leaderboards.byStars.map(r => ({ name: r.info.name, full_name: r.info.full_name, value: r.info.stargazers_count }))}
       />
       <LeaderboardCard
         title="Total Activity (1y)"
         icon={FlameIcon}
         titleClass="text-fg-danger"
         colorVariant="bg-fg-danger"
-        data={leaderboards.byCommits.map(r => ({ name: r.info.name, value: r.commitsLastYear }))}
+        data={leaderboards.byCommits.map(r => ({ name: r.info.name, full_name: r.info.full_name, value: r.commitsLastYear }))}
       />
       <LeaderboardCard
         title="Community (Forks)"
         icon={RepoForkedIcon}
         titleClass="text-fg-success"
         colorVariant="bg-fg-success"
-        data={leaderboards.byForks.map(r => ({ name: r.info.name, value: r.info.forks_count }))}
+        data={leaderboards.byForks.map(r => ({ name: r.info.name, full_name: r.info.full_name, value: r.info.forks_count }))}
       />
       <LeaderboardCard
         title="Update Frequency"
@@ -87,7 +94,7 @@ export const LeaderboardCards = memo(function LeaderboardCards({ leaderboards })
         titleClass="text-fg-done"
         colorVariant="bg-fg-done"
         valueSuffix=" / wk"
-        data={leaderboards.byFrequency.map(r => ({ name: r.repo.info.name, value: r.commitsPerWeek }))}
+        data={leaderboards.byFrequency.map(r => ({ name: r.repo.info.name, full_name: r.repo.info.full_name, value: r.commitsPerWeek }))}
       />
     </div>
   );

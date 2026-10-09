@@ -17,6 +17,9 @@ const sanitizeReadmeHtml = (html) => DOMPurify.sanitize(html, {
   ADD_TAGS: ['picture', 'source'],
 });
 
+/**
+ * Modal dialog that fetches, sanitizes with DOMPurify, and renders a repository's README.
+ */
 export function ReadmeModal() {
   const previewRepo = useAppStore(state => state.previewRepo);
   const setPreviewRepo = useAppStore(state => state.setPreviewRepo);

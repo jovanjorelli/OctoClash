@@ -1,5 +1,9 @@
 import React, { memo } from 'react';
 
+/**
+ * Tabular summary card presenting top-level metrics (commits, stars, forks, issues) across repositories.
+ * @param {{ reposData: Array<object> }} props
+ */
 export const DataSummaryTable = memo(function DataSummaryTable({ reposData }) {
   return (
     <div className="bg-canvas-default border border-border-default rounded-xl p-6 shadow-sm overflow-hidden flex flex-col">

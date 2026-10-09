@@ -1,5 +1,6 @@
 import { formatNpmDownloads } from '../services/npmApi';
 
+// Language brand accent colors used for top repository card border tags
 const GITHUB_LANG_COLORS = {
   JavaScript: '#f1e05a',
   TypeScript: '#3178c6',
@@ -24,6 +25,7 @@ const GITHUB_LANG_COLORS = {
   Lua: '#000080',
 };
 
+// Canvas color palettes matching Primer dark and light themes
 const THEMES = {
   dark: {
     canvasBgStart: '#161b22',
@@ -77,6 +79,12 @@ const THEMES = {
   },
 };
 
+/**
+ * Loads an image from a URL into an HTML Image element with a safety timeout.
+ * @param {string} src - Image URL to fetch.
+ * @param {number} [timeoutMs=1500] - Max duration to wait before falling back to null.
+ * @returns {Promise<HTMLImageElement|null>} Loaded image element or null on error/timeout.
+ */
 function loadImage(src, timeoutMs = 1500) {
   return new Promise((resolve) => {
     if (!src) return resolve(null);
@@ -111,6 +119,15 @@ function loadImage(src, timeoutMs = 1500) {
   });
 }
 
+/**
+ * Draws a rounded rectangle path on the 2D canvas context.
+ * @param {CanvasRenderingContext2D} ctx - Target 2D rendering context.
+ * @param {number} x - Horizontal start offset.
+ * @param {number} y - Vertical start offset.
+ * @param {number} width - Rectangle width.
+ * @param {number} height - Rectangle height.
+ * @param {number} radius - Corner radius in pixels.
+ */
 function roundRect(ctx, x, y, width, height, radius) {
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -125,6 +142,13 @@ function roundRect(ctx, x, y, width, height, radius) {
   ctx.closePath();
 }
 
+/**
+ * Measures text and clips it with an ellipsis if it exceeds the maximum allotted width.
+ * @param {CanvasRenderingContext2D} ctx - Canvas context with active font configuration.
+ * @param {string} text - Raw string to measure.
+ * @param {number} maxWidth - Maximum width allowed in pixels.
+ * @returns {string} Truncated string with ellipsis or original text.
+ */
 function fitText(ctx, text, maxWidth) {
   if (!text) return '';
   if (ctx.measureText(text).width <= maxWidth) return text;
@@ -135,6 +159,15 @@ function fitText(ctx, text, maxWidth) {
   return `${trimmed}…`;
 }
 
+/**
+ * Generates an in-memory 2D Canvas rendering of up to 10 repositories and exports it as a PNG Blob.
+ * @param {object[]} reposData - Array of normalized repository objects to render.
+ * @param {Record<string, number>} [npmDownloads={}] - Map of repo full names to weekly download counts.
+ * @param {'auto'|'dark'|'light'} [themePreference='auto'] - Desired color palette.
+ * @param {number} [pageIndex=0] - Current chunk index for multi-part exports.
+ * @param {number} [totalPages=1] - Total chunk count for multi-part exports.
+ * @returns {Promise<Blob|null>} Rendered PNG blob or null if empty.
+ */
 export async function generateBattleCardBlob(reposData, npmDownloads = {}, themePreference = 'auto', pageIndex = 0, totalPages = 1) {
   if (!reposData || reposData.length === 0) return null;
 
@@ -381,6 +414,13 @@ export async function generateBattleCardBlob(reposData, npmDownloads = {}, theme
   });
 }
 
+/**
+ * Generates battle card PNG images in 10-repository chunks and triggers sequential browser file downloads.
+ * @param {object[]} reposData - Full list of repositories to export.
+ * @param {Record<string, number>} [npmDownloads={}] - Map of repo full names to download counts.
+ * @param {'auto'|'dark'|'light'} [themePreference='auto'] - Card color theme.
+ * @param {((progress: {current: number, total: number}) => void)|null} [onProgress=null] - Progress callback.
+ */
 export async function exportBattleCardPng(reposData, npmDownloads = {}, themePreference = 'auto', onProgress = null) {
   if (!reposData || reposData.length === 0) return;
 

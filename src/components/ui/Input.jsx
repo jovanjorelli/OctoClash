@@ -1,6 +1,9 @@
 import React from 'react';
 import { cn } from '../../utils/helpers';
 
+/**
+ * Styled text input component with custom theme focus rings and placeholder styles.
+ */
 export const Input = React.forwardRef(({ className, type = "text", ...props }, ref) => {
   return (
     <input

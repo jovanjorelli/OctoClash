@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, lazy, Suspense, startTransition } from 'react';
+import React, { useEffect, useState, useCallback, useRef, lazy, Suspense, startTransition } from 'react';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { RepoInput } from './components/compare/RepoInput';
@@ -13,6 +13,10 @@ import { SettingsModal } from './components/settings/SettingsModal';
 const Charts = lazy(() => import('./components/compare/Charts').then((m) => ({ default: m.Charts })));
 const ReadmeModal = lazy(() => import('./components/compare/ReadmeModal').then((m) => ({ default: m.ReadmeModal })));
 
+/**
+ * Root OctoClash application component orchestrating URL sync, repository fetching,
+ * view tab switching (Table/Charts), modals, and global error alerts.
+ */
 function App() {
   const repos = useAppStore((state) => state.repos);
   const setRepos = useAppStore((state) => state.setRepos);
@@ -121,15 +125,25 @@ function App() {
     };
   }, [repos, reposData, fetchRepoData, setReposData, setRepos, setError]);
 
+  const inFlightRef = useRef(new Set());
+
   const handleFetchRepo = useCallback(async (ownerRepo) => {
-    if (repos.includes(ownerRepo)) return;
+    const normalized = ownerRepo?.trim();
+    if (!normalized) return;
+    const lower = normalized.toLowerCase();
+    if (repos.some((r) => r.toLowerCase() === lower)) return;
+    if (inFlightRef.current.has(lower)) return;
+
+    inFlightRef.current.add(lower);
     try {
-      const data = await fetchRepoData(ownerRepo);
+      const data = await fetchRepoData(normalized);
       if (data) {
-        addRepo(ownerRepo);
+        addRepo(data.info?.full_name || normalized, data);
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      inFlightRef.current.delete(lower);
     }
   }, [repos, fetchRepoData, addRepo]);
 

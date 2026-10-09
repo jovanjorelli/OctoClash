@@ -1,6 +1,10 @@
 import React from 'react';
 import { Tooltip } from '../ui/Tooltip';
 
+/**
+ * Avatar stack rendering top contributors with tooltips and GitHub profile links.
+ * @param {{ contributors?: Array<{ login: string, html_url: string, avatar_url: string }> }} props
+ */
 export function ContributorsList({ contributors }) {
   if (!contributors || contributors.length === 0) return <span className="text-fg-muted">-</span>;
 

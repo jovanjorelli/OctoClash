@@ -3,6 +3,9 @@ import { MarkGithubIcon, SunIcon, MoonIcon, SyncIcon, DeviceDesktopIcon } from '
 import { useAppStore } from '../../store/appStore';
 import { clearOctoClashStorage } from '../../utils/storage';
 
+/**
+ * Top navigation header component featuring branding, cache reset button, and system/light/dark theme toggles.
+ */
 export function Header() {
   const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);

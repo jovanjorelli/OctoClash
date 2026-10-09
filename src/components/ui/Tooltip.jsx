@@ -3,6 +3,10 @@ import { createPortal } from 'react-dom';
 import { QuestionIcon } from '@primer/octicons-react';
 import { cn } from '../../utils/helpers';
 
+/**
+ * Accessible portal-rendered tooltip displaying floating help text on hover or keyboard focus.
+ * @param {{ text?: React.ReactNode, content?: React.ReactNode, children?: React.ReactNode, className?: string }} props
+ */
 export function Tooltip({ text, content, children, className }) {
   const displayContent = text || content;
   const tooltipId = useId();

@@ -1,6 +1,10 @@
 import React from 'react';
 import { AlertIcon, XCircleIcon, CheckCircleIcon, InfoIcon } from '@primer/octicons-react';
 
+/**
+ * Dismissible alert banner component supporting error, success, info, and warning variants.
+ * @param {{ message: string|null, type?: 'error'|'success'|'info'|'warning', onClose?: () => void }} props
+ */
 export function Alert({ message, type = 'error', onClose }) {
   if (!message) return null;
 

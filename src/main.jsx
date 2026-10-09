@@ -1,3 +1,7 @@
+/**
+ * Application entry point mounting the root App component wrapped in StrictMode and ErrorBoundary.
+ */
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
